@@ -16,8 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from shoe.api.router import router_shoe
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router_shoe.urls))
+    path('shoe', include('shoe.urls')),
+    #path('/order', include('shoe.urls')),
+
 ]
