@@ -4,9 +4,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import ShoeSerializer
 from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 
 @api_view(['GET'])
 @cache_page(60)
+@vary_on_headers('Authorization')
 def shoeList(request):
 	shoes = Shoe.objects.all().order_by('-id')
 	serializer = ShoeSerializer(shoes, many=True)
@@ -14,6 +16,7 @@ def shoeList(request):
 
 @api_view(['GET'])
 @cache_page(60)
+@vary_on_headers('Authorization')
 def shoeDetail(request, pk):
 	shoe = Shoe.objects.filter(id=pk).first()
 	if shoe:
@@ -36,7 +39,7 @@ def shoeCreate(request):
 
 @api_view(['PUT'])
 def shoeUpdate(request, pk):
-	shoe = shoe.objectsfilter(id=pk).first()
+	shoe = Shoe.objects.filter(id=pk).first()
 	if request.user.is_superuser:
 		if shoe:
 			serializer = ShoeSerializer(instance=shoe, data=request.data)
