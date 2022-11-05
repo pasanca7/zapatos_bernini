@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.core.validators import MinValueValidator
 from shoe.models import Shoe
@@ -8,6 +9,7 @@ currencies = [
     ]
 
 class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created = models.DateTimeField(default=now, editable=False)
     status = models.CharField(max_length=255, default='PENDING')
     currency = models.CharField(max_length=5, choices=currencies, default="€")
