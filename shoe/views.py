@@ -46,9 +46,11 @@ def shoeUpdate(request, pk):
 
 @api_view(['DELETE'])
 def shoeDelete(request, pk):
-	shoe = Shoe.objects.get(id=pk)
-	shoe.delete()
-
-	return Response(status=status.HTTP_204_NO_CONTENT)
+	shoe = Shoe.objects.filter(id=pk).first()
+	if shoe:
+		shoe.delete()
+		return Response(status=status.HTTP_204_NO_CONTENT)
+	else:
+		return Response(status=status.HTTP_404_NOT_FOUND)
 
 
