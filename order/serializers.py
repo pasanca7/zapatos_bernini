@@ -12,7 +12,6 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderLineSerializer(serializers.ModelSerializer):
     shoe = serializers.PrimaryKeyRelatedField(allow_null=False, many=False,queryset=Shoe.objects.all())
     order = serializers.PrimaryKeyRelatedField(allow_null=True, many=False, queryset=Order.objects.all())
-    user = serializers.PrimaryKeyRelatedField(allow_null=True, many=False, queryset=User.objects.all())
     
     class Meta:
         model = OrderLine

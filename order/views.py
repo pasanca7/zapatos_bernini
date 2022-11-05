@@ -6,10 +6,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import OrderLineSerializer, OrderSerializer
 from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 from order import utils
 
 @api_view(['GET'])
 @cache_page(60)
+@vary_on_headers('Authorization')
 def lineList(request):
 	lines = OrderLine.objects.all().order_by('-id')
 	serializer = OrderLineSerializer(lines, many=True)
@@ -17,6 +19,7 @@ def lineList(request):
 
 @api_view(['GET'])
 @cache_page(60)
+@vary_on_headers('Authorization')
 def lineDetail(request, pk):
     line = OrderLine.objects.filter(id=pk).first()
     if line:
@@ -28,8 +31,8 @@ def lineDetail(request, pk):
 
 @api_view(['POST'])
 def lineCreate(request):
-    shoe = Shoe.objects.filter(id=request.data['shoe']).first()
     try :
+        shoe = Shoe.objects.filter(id=request.data['shoe']).first()
         request.data["shoe_name"]=shoe.name
         request.data["currency"]=shoe.currency
         request.data["total_amount"]=request.data["quantity"] * shoe.price
@@ -47,10 +50,11 @@ def lineCreate(request):
 def lineUpdate(request, pk):
     line = OrderLine.objects.filter(id=pk).first()
     if line:
+        request.data["shoe_name"]=line.shoe.name
         serializer = OrderLineSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
     else:
@@ -67,6 +71,7 @@ def lineDelete(request, pk):
 
 @api_view(['GET'])
 @cache_page(60)
+@vary_on_headers('Authorization')
 def orderList(request):
     if request.user.is_superuser:
         orders = Order.objects.all().order_by('-id')
@@ -77,6 +82,7 @@ def orderList(request):
 
 @api_view(['GET'])
 @cache_page(60)
+@vary_on_headers('Authorization')
 def orderDetail(request, pk):
     order = Order.objects.filter(id=pk).first()
     if order:
