@@ -5,6 +5,7 @@ from order.models import Order, OrderLine
 class OrderLineAdmin(admin.ModelAdmin):
     list_display = [
         "id",
+        "order",
         "shoe",
         "shoe_name",
         "quantity",
@@ -16,6 +17,7 @@ class OrderLineAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = [
         "id",
+        "user",
         "created",
         "status",
         "currency",

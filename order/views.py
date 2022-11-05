@@ -64,9 +64,12 @@ def lineDelete(request, pk):
 
 @api_view(['GET'])
 def orderList(request):
-	orders = Order.objects.all().order_by('-id')
-	serializer = OrderSerializer(orders, many=True)
-	return Response(serializer.data, status=status.HTTP_200_OK)
+    if request.user.is_superuser:
+        orders = Order.objects.all().order_by('-id')
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['GET'])
 def orderDetail(request, pk):
@@ -84,6 +87,7 @@ def orderCreate(request):
         lines = OrderLine.objects.filter(id__in=line_ids)
         utils.validate_lines(lines)
         random_float = utils.generate_random_float()
+        request.data["user"] = request.user.id
         request.data["shipping_costs"] = random_float
         request.data["currency"] = lines.first().currency
         request.data["total_amount"] = random_float + float(lines.aggregate(Sum('total_amount'))["total_amount__sum"])
