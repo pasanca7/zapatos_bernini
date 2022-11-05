@@ -12,10 +12,12 @@ def shoeList(request):
 
 @api_view(['GET'])
 def shoeDetail(request, pk):
-	shoes = Shoe.objects.get(id=pk)
-	serializer = ShoeSerializer(shoes, many=False)
-	return Response(serializer.data, status=status.HTTP_200_OK)
-
+	shoe = Shoe.objects.filter(id=pk).first()
+	if shoe:
+		serializer = ShoeSerializer(shoe, many=False)
+		return Response(serializer.data, status=status.HTTP_200_OK)
+	else:
+		return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def shoeCreate(request):
@@ -24,17 +26,22 @@ def shoeCreate(request):
 	if serializer.is_valid():
 		serializer.save()
 
-	return Response(serializer.data, status=status.HTTP_201_OK)
+	return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['PUT'])
 def shoeUpdate(request, pk):
-	shoe = shoe.objects.get(id=pk)
-	serializer = ShoeSerializer(instance=shoe, data=request.data)
+	shoe = shoe.objectsfilter(id=pk).first()
+	if shoe:
+		serializer = ShoeSerializer(instance=shoe, data=request.data)
 
-	if serializer.is_valid():
-		serializer.save()
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_200_OK)
+		else:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		return Response(status=status.HTTP_404_NOT_FOUND)
 
-	return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['DELETE'])

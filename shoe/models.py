@@ -12,4 +12,4 @@ class Shoe(models.Model):
     stock = models.IntegerField()
 
     def __str__(self):
-        return self.name + '-' + self.size
+        return self.name + '-' + str(self.size)
