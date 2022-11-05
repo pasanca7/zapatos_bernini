@@ -5,15 +5,18 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import OrderLineSerializer, OrderSerializer
+from django.views.decorators.cache import cache_page
 from order import utils
 
 @api_view(['GET'])
+@cache_page(60)
 def lineList(request):
 	lines = OrderLine.objects.all().order_by('-id')
 	serializer = OrderLineSerializer(lines, many=True)
 	return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
+@cache_page(60)
 def lineDetail(request, pk):
     line = OrderLine.objects.filter(id=pk).first()
     if line:
@@ -63,6 +66,7 @@ def lineDelete(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
+@cache_page(60)
 def orderList(request):
     if request.user.is_superuser:
         orders = Order.objects.all().order_by('-id')
@@ -72,6 +76,7 @@ def orderList(request):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['GET'])
+@cache_page(60)
 def orderDetail(request, pk):
     order = Order.objects.filter(id=pk).first()
     if order:
