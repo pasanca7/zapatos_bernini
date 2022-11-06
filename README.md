@@ -29,17 +29,17 @@ It is necesary to add the Authentication header to consume the API. Example:
 
 ```
 Authorization: Token <token>
-JSON body:
-{
-	"username": "admin",
-	"password": "admin"
-}
 ```
 
 ### Authentication
 - Get authentication token
 ```
 localhost:8000/api-token-auth/ 
+JSON body:
+{
+	"username": "admin",
+	"password": "admin"
+}
 ```
 ### Shoe
 - Get all shoes [GET]
